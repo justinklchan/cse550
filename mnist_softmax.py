@@ -22,7 +22,7 @@ from __future__ import division
 from __future__ import print_function
 
 import argparse
-
+import sys
 # Import data
 from tensorflow.examples.tutorials.mnist import input_data
 
@@ -32,6 +32,7 @@ FLAGS = None
 
 
 def main(_):
+
   mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
 
   # Create the model
@@ -58,18 +59,20 @@ def main(_):
   saver = tf.train.Saver(max_to_keep=1)
   sess = tf.InteractiveSession()
 
+  latestFile = 0
   restore = False
   if restore:  
     check=tf.train.latest_checkpoint("./")
     print(check)
-    print(saver.restore(sess, check))
+    latestFile = int(check[2:])
   
   # partition data set and send eah off to separate nodes
 
   # Train
   tf.global_variables_initializer().run()
-  for i in range(1000):
+  for i in range(latestFile,1000):
     if i % 100 == 0:
+      print(i)
       saver.save(sess, str(i))
     if i == 500 and not restore:
       exit()
